@@ -1,5 +1,6 @@
 import express from "express";
 const __dirname = import.meta.dirname;
+import bodyParser from "body-parser";
 
 const app = express();
 app.use(express.static('public'));
@@ -18,8 +19,8 @@ app.get('/adminPage', (req, res) => {
 });
 
 // API routing to get input
-app.get('/student', (req, res) => {
-    const { studentId, firstName, lastName, section } = req.query;
+app.get('/student', urlEncoderParser, (req, res) => {
+    const { studentId, firstName, lastName, section } = req.body;
 
     // Log inputs to terminal
     console.log("ID:", studentId);
@@ -28,7 +29,7 @@ app.get('/student', (req, res) => {
     console.log("Section:", section);
 
     if (studentId && firstName) {
-        res.send(`
+        res.end(`
         <h1>Student Information</h1>
         <p>ID: ${studentId}</p>
         <p>Full Name: ${firstName} ${lastName}</p>
@@ -38,7 +39,7 @@ app.get('/student', (req, res) => {
     }
 });
 
-app.get('/admin', (req, res) => {
+app.post('/admin', (req, res) => {
     const { adminId, firstName, lastName, section } = req.query;
 
     // Log inputs to terminal
