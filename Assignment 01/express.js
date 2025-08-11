@@ -5,6 +5,8 @@ import bodyParser from "body-parser";
 const app = express();
 app.use(express.static('public'));
 
+const urlEncoderParser = bodyParser.urlencoded({ extended: false});
+
 // Routes to link pages
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/pages/home.html');
@@ -39,7 +41,7 @@ app.get('/student', urlEncoderParser, (req, res) => {
     }
 });
 
-app.post('/admin', (req, res) => {
+app.get('/admin', urlEncoderParser, (req, res) => {
     const { adminId, firstName, lastName, section } = req.query;
 
     // Log inputs to terminal
