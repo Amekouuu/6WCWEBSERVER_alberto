@@ -21,7 +21,7 @@ app.get('/adminPage', (req, res) => {
 });
 
 // API routing to get input
-app.get('/student', urlEncoderParser, (req, res) => {
+app.post('/student', urlEncoderParser, (req, res) => {
     const { studentId, firstName, lastName, section } = req.body;
 
     // Log inputs to terminal
@@ -41,8 +41,8 @@ app.get('/student', urlEncoderParser, (req, res) => {
     }
 });
 
-app.get('/admin', urlEncoderParser, (req, res) => {
-    const { adminId, firstName, lastName, section } = req.query;
+app.post('/admin', urlEncoderParser, (req, res) => {
+    const { adminId, firstName, lastName, section } = req.body;
 
     // Log inputs to terminal
     console.log("ID:", adminId);
@@ -51,7 +51,7 @@ app.get('/admin', urlEncoderParser, (req, res) => {
     console.log("Department:", section);
 
     if (adminId && firstName) {
-        res.send(`
+        res.end(`
         <h1>Admin Information</h1>
         <p>ID: ${adminId}</p>
         <p>Name: ${firstName} ${lastName}</p>
