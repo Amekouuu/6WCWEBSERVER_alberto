@@ -5,27 +5,26 @@ import path from 'path';
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname (__filename);
 const app = express();
-const urlEncoderParser = bodyParser.urlencoded({ extended: false});
+const urlEncoderParser = bodyParser.urlencoded({ extended: false });
 
 app.use(express.static('public'));
 
-
-// Multer stuff
+// Multer configuration for file upload
 var storage = multer.diskStorage({
     destination: (req, file, callback) => {
         callback(null, 'uploads/');
     },
     filename: (req, file, callback) => {
-        callback (null, file.originalname);
+        callback(null, file.originalname);
     }
 });
-var upload = multer({storage: storage}).single('file');
 
-// Routes to link pages
+var upload = multer({ storage: storage }).single('file');
+
+// Routes to serve pages
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/pages/home.html');
 });
@@ -42,20 +41,12 @@ app.get('/admin/upload', (req, res) => {
   res.sendFile(__dirname + '/pages/uploadForm.html');
 });
 
-// app.get('/uploadForm', (req, res) => {
-//     res.sendFile(__dirname + '/pages/uploadForm.html');
-// });
-
-
-// API routing to get input
+// API route for student info submission
 app.post('/student', urlEncoderParser, (req, res) => {
     const { studentId, firstName, lastName, section } = req.body;
 
-    // Log inputs to terminal
-    console.log("ID:", studentId);
-    console.log("First Name:", firstName);
-    console.log("Last Name:", lastName);
-    console.log("Section:", section);
+    // Log all form data
+    console.log("Student Form Data:", req.body);
 
     if (studentId && firstName) {
         res.end(`
@@ -68,14 +59,12 @@ app.post('/student', urlEncoderParser, (req, res) => {
     }
 });
 
+// API route for admin info submission
 app.post('/admin', urlEncoderParser, (req, res) => {
     const { adminId, firstName, lastName, section } = req.body;
 
-    // Log inputs to terminal
-    console.log("ID:", adminId);
-    console.log("First Name:", firstName);
-    console.log("Last Name:", lastName);
-    console.log("Department:", section);
+    // Log all form data
+    console.log("Admin Form Data:", req.body);
 
     if (adminId && firstName) {
         res.end(`
@@ -88,12 +77,14 @@ app.post('/admin', urlEncoderParser, (req, res) => {
     }
 });
 
+// API route for file upload with additional form data
 app.post('/upload', (req, res) => {
     upload(req, res, (err) => {
         if (err) {
             return res.status(500).send('Error uploading file');
         }
 
+        // Log the uploaded file and form data
         const username = req.body.username;
         const uploadedFile = req.file; 
 
@@ -101,28 +92,30 @@ app.post('/upload', (req, res) => {
             return res.status(400).send('No file uploaded');
         }
 
+        console.log("Upload Form Data:", req.body);
         console.log(`Username: ${username}`);
         console.log(`File Path: ${uploadedFile.path}`);
+        console.log(`File Name: ${uploadedFile.originalname}`);
 
         res.end('File and form uploaded successfully');
     });
 });
 
-
-// Gets
+// Simple GET route for testing purposes
 app.get('/get', (req, res) => {
     const response = {
         firstName: req.query.firstName,
         lastName: req.query.lastName,
     };
 
-    // Log inputs to terminal
+    // Log inputs from the GET route
     console.log("GET Route Called");
     console.log("Received Data:", response);
 
     res.end(`Received Data: ${JSON.stringify(response)}`);
 });
 
+// Start the server
 const server = app.listen(5000, () => {
     const host = server.address().address;
     const port = server.address().port;
