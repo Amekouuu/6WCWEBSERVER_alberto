@@ -1,11 +1,29 @@
 import express from "express";
-const __dirname = import.meta.dirname;
+import multer from "multer";
 import bodyParser from "body-parser";
+import path from 'path';
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname (__filename);
 const app = express();
+const urlEncoderParser = bodyParser.urlencoded({ extended: false});
+
 app.use(express.static('public'));
 
-const urlEncoderParser = bodyParser.urlencoded({ extended: false});
+
+// Multer stuff
+var storage = multer.diskStorage({
+    destination: (req, file, callback) => {
+        callback(null, 'uploads/');
+    },
+    filename: (req, file, callback) => {
+        callback (null, file.originalname);
+    }
+});
+var upload = multer({storage: storage}).single('file');
 
 // Routes to link pages
 app.get('/', (req, res) => {
@@ -19,6 +37,11 @@ app.get('/studentPage', (req, res) => {
 app.get('/adminPage', (req, res) => {
     res.sendFile(__dirname + '/pages/admin.html');
 });
+
+app.get('/uploadForm', (req, res) => {
+    res.sendFile(__dirname + '/pages/uploadForm.html');
+});
+
 
 // API routing to get input
 app.post('/student', urlEncoderParser, (req, res) => {
@@ -60,6 +83,27 @@ app.post('/admin', urlEncoderParser, (req, res) => {
         res.status(400).send('Missing required admin information.');
     }
 });
+
+app.post('/upload', (req, res) => {
+    upload(req, res, (err) => {
+        if (err) {
+            return res.status(500).send('Error uploading file');
+        }
+
+        const username = req.body.username;
+        const uploadedFile = req.file; 
+        
+        if (!uploadedFile) {
+            return res.status(400).send('No file uploaded');
+        }
+
+        console.log(`Username: ${username}`);
+        console.log(`File Path: ${uploadedFile.path}`);
+
+        res.end('File and form uploaded successfully');
+    });
+});
+
 
 // Gets
 app.get('/get', (req, res) => {
