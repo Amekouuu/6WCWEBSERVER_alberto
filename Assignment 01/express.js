@@ -34,13 +34,17 @@ app.get('/studentPage', (req, res) => {
     res.sendFile(__dirname + '/pages/student.html');
 });
 
-app.get('/adminPage', (req, res) => {
+app.get('/adminPage/', (req, res) => {
     res.sendFile(__dirname + '/pages/admin.html');
 });
 
-app.get('/uploadForm', (req, res) => {
-    res.sendFile(__dirname + '/pages/uploadForm.html');
+app.get('/admin/upload', (req, res) => {
+  res.sendFile(__dirname + '/pages/uploadForm.html');
 });
+
+// app.get('/uploadForm', (req, res) => {
+//     res.sendFile(__dirname + '/pages/uploadForm.html');
+// });
 
 
 // API routing to get input
@@ -92,7 +96,7 @@ app.post('/upload', (req, res) => {
 
         const username = req.body.username;
         const uploadedFile = req.file; 
-        
+
         if (!uploadedFile) {
             return res.status(400).send('No file uploaded');
         }
