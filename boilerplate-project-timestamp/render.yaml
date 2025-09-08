@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: timestamp-api
+    env: node
+    buildCommand: cd 6WCWEBSERVER_alberto/boilerplate-project-timestamp && npm install
+    startCommand: node index.js
+    rootDir: 6WCWEBSERVER_alberto/boilerplate-project-timestamp
