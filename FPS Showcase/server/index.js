@@ -19,7 +19,7 @@ app.get("/api/items", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("✅ Express server is running. Visit /api/items");
+  res.send(`Visit  http://localhost:${PORT}/api/items`);
 });
 
 app.listen(PORT, () => {
